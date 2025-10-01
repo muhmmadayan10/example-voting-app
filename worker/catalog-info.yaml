@@ -1,0 +1,62 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: vote-worker
+  title: Vote Processing Worker
+  description: .NET Core background service that processes votes from Redis queue and stores them in PostgreSQL
+  tags:
+    - dotnet
+    - csharp
+    - worker
+    - background-service
+    - queue-processor
+  annotations:
+    github.com/project-slug: muhmmadayan10/example-voting-app
+    backstage.io/techdocs-ref: dir:.
+    backstage.io/source-location: url:https://github.com/muhmmadayan10/example-voting-app/tree/main/worker
+  links:
+    - url: https://github.com/muhmmadayan10/example-voting-app/tree/main/worker
+      title: Source Code
+      icon: github
+spec:
+  type: service
+  lifecycle: production
+  owner: platform-team
+  system: voting-app
+  dependsOn:
+    - resource:redis-cache
+    - resource:postgres-database
+  consumesApis: []
+  providesApis: []
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: redis-cache
+  title: Redis Cache
+  description: Redis cache for storing vote queue and session data
+  tags:
+    - redis
+    - cache
+    - in-memory
+    - queue
+spec:
+  type: cache
+  owner: platform-team
+  system: voting-app
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: postgres-database
+  title: PostgreSQL Database
+  description: PostgreSQL database for storing voting results and aggregated data
+  tags:
+    - postgresql
+    - database
+    - storage
+    - persistence
+spec:
+  type: database
+  owner: platform-team
+  system: voting-app

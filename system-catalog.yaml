@@ -1,0 +1,26 @@
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: voting-app
+  title: Example Voting Application
+  description: A distributed voting application demonstrating microservices architecture
+  tags:
+    - microservices
+    - voting
+    - demo
+    - docker
+    - kubernetes
+  annotations:
+    github.com/project-slug: muhmmadayan10/example-voting-app
+spec:
+  owner: platform-team
+  domain: demo-applications
+---
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: demo-applications
+  title: Demo Applications
+  description: Domain for demonstration and example applications
+spec:
+  owner: platform-team

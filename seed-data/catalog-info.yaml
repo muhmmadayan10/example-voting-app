@@ -1,0 +1,75 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: vote-seed
+  title: Vote Seed Data Generator
+  description: Python utility service for generating sample voting data for testing and demonstration
+  tags:
+    - python
+    - utility
+    - seed-data
+    - testing
+    - demo
+  annotations:
+    github.com/project-slug: muhmmadayan10/example-voting-app
+    backstage.io/techdocs-ref: dir:.
+    backstage.io/source-location: url:https://github.com/muhmmadayan10/example-voting-app/tree/main/seed-data
+  links:
+    - url: https://github.com/muhmmadayan10/example-voting-app/tree/main/seed-data
+      title: Source Code
+      icon: github
+spec:
+  type: service
+  lifecycle: experimental
+  owner: platform-team
+  system: voting-app
+  dependsOn:
+    - component:vote-app
+  consumesApis:
+    - voting-api
+  providesApis: []
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: voting-api
+  title: Voting API
+  description: REST API for casting votes
+  tags:
+    - voting
+    - rest-api
+    - python
+    - flask
+spec:
+  type: openapi
+  lifecycle: production
+  owner: platform-team
+  system: voting-app
+  definition: |
+    openapi: 3.0.0
+    info:
+      title: Voting API
+      version: 1.0.0
+      description: API for casting votes in the voting application
+    paths:
+      /:
+        get:
+          summary: Get voting page
+          responses:
+            '200':
+              description: Voting page HTML
+        post:
+          summary: Cast a vote
+          requestBody:
+            required: true
+            content:
+              application/x-www-form-urlencoded:
+                schema:
+                  type: object
+                  properties:
+                    vote:
+                      type: string
+                      enum: [a, b]
+          responses:
+            '200':
+              description: Vote successfully cast

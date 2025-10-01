@@ -1,0 +1,94 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: vote-app
+  title: Vote Application
+  description: Python Flask web application for casting votes
+  tags:
+    - python
+    - flask
+    - frontend
+    - voting
+    - web-app
+  annotations:
+    github.com/project-slug: muhmmadayan10/example-voting-app
+    backstage.io/techdocs-ref: dir:.
+    backstage.io/source-location: url:https://github.com/muhmmadayan10/example-voting-app/tree/main/vote
+  links:
+    - url: http://localhost:8080
+      title: Vote Application
+      icon: web
+    - url: https://github.com/muhmmadayan10/example-voting-app/tree/main/vote
+      title: Source Code
+      icon: github
+spec:
+  type: service
+  lifecycle: production
+  owner: platform-team
+  system: voting-app
+  providesApis:
+    - voting-api
+  dependsOn:
+    - resource:redis-cache
+  consumesApis: []
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: redis-cache
+  title: Redis Cache
+  description: Redis cache for storing vote queue and session data
+  tags:
+    - redis
+    - cache
+    - in-memory
+    - queue
+spec:
+  type: cache
+  owner: platform-team
+  system: voting-app
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: voting-api
+  title: Voting API
+  description: REST API for casting votes
+  tags:
+    - voting
+    - rest-api
+    - python
+    - flask
+spec:
+  type: openapi
+  lifecycle: production
+  owner: platform-team
+  system: voting-app
+  definition: |
+    openapi: 3.0.0
+    info:
+      title: Voting API
+      version: 1.0.0
+      description: API for casting votes in the voting application
+    paths:
+      /:
+        get:
+          summary: Get voting page
+          responses:
+            '200':
+              description: Voting page HTML
+        post:
+          summary: Cast a vote
+          requestBody:
+            required: true
+            content:
+              application/x-www-form-urlencoded:
+                schema:
+                  type: object
+                  properties:
+                    vote:
+                      type: string
+                      enum: [a, b]
+          responses:
+            '200':
+              description: Vote successfully cast

@@ -1,0 +1,80 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: result-app
+  title: Results Application
+  description: Node.js Express web application for displaying voting results with real-time updates
+  tags:
+    - nodejs
+    - express
+    - frontend
+    - results
+    - websocket
+    - realtime
+  annotations:
+    github.com/project-slug: muhmmadayan10/example-voting-app
+    backstage.io/techdocs-ref: dir:.
+    backstage.io/source-location: url:https://github.com/muhmmadayan10/example-voting-app/tree/main/result
+  links:
+    - url: http://localhost:8081
+      title: Results Application
+      icon: web
+    - url: https://github.com/muhmmadayan10/example-voting-app/tree/main/result
+      title: Source Code
+      icon: github
+spec:
+  type: service
+  lifecycle: production
+  owner: platform-team
+  system: voting-app
+  providesApis:
+    - results-api
+  dependsOn:
+    - resource:postgres-database
+  consumesApis: []
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: postgres-database
+  title: PostgreSQL Database
+  description: PostgreSQL database for storing voting results and aggregated data
+  tags:
+    - postgresql
+    - database
+    - storage
+    - persistence
+spec:
+  type: database
+  owner: platform-team
+  system: voting-app
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: results-api
+  title: Results API
+  description: WebSocket and HTTP API for viewing voting results
+  tags:
+    - results
+    - websocket
+    - nodejs
+    - express
+spec:
+  type: openapi
+  lifecycle: production
+  owner: platform-team
+  system: voting-app
+  definition: |
+    openapi: 3.0.0
+    info:
+      title: Results API
+      version: 1.0.0
+      description: API for viewing voting results with real-time updates
+    paths:
+      /:
+        get:
+          summary: Get results page
+          responses:
+            '200':
+              description: Results page HTML with real-time updates
