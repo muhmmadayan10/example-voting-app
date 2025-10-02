@@ -1,0 +1,20 @@
+site_name: Vote Service Documentation
+site_description: Frontend voting interface for the VotingTech voting application
+
+nav:
+  - Home: index.md
+  - API Reference: api.md
+  - Development: development.md
+  - Deployment: deployment.md
+
+plugins:
+  - techdocs-core
+
+theme:
+  name: material
+  palette:
+    primary: blue
+    accent: blue
+  features:
+    - navigation.tabs
+    - navigation.sections
