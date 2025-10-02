@@ -16,8 +16,8 @@ metadata:
     github.com/project-slug: muhmmadayan10/example-voting-app
     backstage.io/techdocs-ref: dir:./result
     backstage.io/source-location: url:https://github.com/muhmmadayan10/example-voting-app/tree/main/result
-   'backstage.io/kubernetes-id': result   # Link to your Kubernetes resources
-   'backstage.io/kubernetes-namespace': dawar  # Optional if your pod is in "default"
+    backstage.io/kubernetes-id: result   # Link to your Kubernetes resources
+    backstage.io/kubernetes-namespace: dawar  # Optional if your pod is in "default"
   links:
     - url: http://localhost:8081
       title: Results Application
