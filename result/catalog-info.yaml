@@ -13,7 +13,7 @@ metadata:
     - realtime
   annotations:
     github.com/project-slug: muhmmadayan10/example-voting-app
-    backstage.io/techdocs-ref: dir:./docs
+    backstage.io/techdocs-ref: dir:./
     backstage.io/source-location: url:https://github.com/muhmmadayan10/example-voting-app/tree/main/result
   links:
     - url: http://localhost:8081
