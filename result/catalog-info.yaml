@@ -2,8 +2,8 @@ apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: result-app
-  title: Results Application
-  description: Node.js Express web application for displaying voting results with real-time updates
+  #title: Results Application
+#  description: Node.js Express web application for displaying voting results with real-time updates
   
   tags:
     - nodejs
