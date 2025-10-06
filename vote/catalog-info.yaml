@@ -52,13 +52,7 @@ apiVersion: backstage.io/v1alpha1
 kind: API
 metadata:
   name: voting-api
-  title: Voting API
-  description: REST API for casting votes
-  tags:
-    - voting
-    - rest-api
-    - python
-    - flask
+ 
 spec:
   type: openapi
   lifecycle: production
