@@ -63,6 +63,7 @@ spec:
   type: openapi
   lifecycle: production
   system: voting-app
+  owner: hb-team
   definition: |
     openapi: 3.0.0
     info:
