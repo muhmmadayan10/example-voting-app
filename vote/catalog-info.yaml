@@ -62,7 +62,6 @@ metadata:
 spec:
   type: openapi
   lifecycle: production
-  owner: platform-team
   system: voting-app
   definition: |
     openapi: 3.0.0
