@@ -46,7 +46,7 @@ metadata:
 spec:
   type: cache
   owner: platform-team
-  system: voting-app
+  
 ---
 apiVersion: backstage.io/v1alpha1
 kind: API
