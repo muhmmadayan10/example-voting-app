@@ -22,6 +22,7 @@ metadata:
     backstage.io/ayan: enabled  # Optional if your pod is in "default"
 
     jenkins.io/job-full-name: 'new-demo'
+    jenkins.io/job-full-name: 'demo'
    # backstage.io/kubernetes-label-selector: dawar
   links:
     - url: http://localhost:8081
