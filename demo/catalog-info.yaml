@@ -1,0 +1,1082 @@
+---
+# ============================================================
+# COMPREHENSIVE CATALOG - E-Commerce Platform
+# ============================================================
+# This catalog demonstrates a full microservices architecture
+# with 25+ entities including systems, components, APIs, and resources
+# ============================================================
+
+# ============================================================
+# DOMAIN
+# ============================================================
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: ecommerce-platform
+  title: E-Commerce Platform
+  description: Complete e-commerce platform with payment processing, inventory management, and customer analytics
+  tags:
+    - ecommerce
+    - retail
+    - platform
+spec:
+  owner: platform-team
+
+# ============================================================
+# SYSTEMS
+# ============================================================
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: customer-management
+  title: Customer Management System
+  description: Handles customer accounts, profiles, authentication, and preferences
+  tags:
+    - customers
+    - identity
+    - auth
+spec:
+  owner: backend-team
+  domain: ecommerce-platform
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: order-processing
+  title: Order Processing System
+  description: Manages order lifecycle from cart to fulfillment
+  tags:
+    - orders
+    - checkout
+    - fulfillment
+spec:
+  owner: backend-team
+  domain: ecommerce-platform
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: inventory-management
+  title: Inventory Management System
+  description: Product catalog, stock levels, and warehouse management
+  tags:
+    - inventory
+    - products
+    - warehouse
+spec:
+  owner: backend-team
+  domain: ecommerce-platform
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: payment-processing
+  title: Payment Processing System
+  description: Payment gateway integration and transaction processing
+  tags:
+    - payments
+    - transactions
+    - billing
+spec:
+  owner: backend-team
+  domain: ecommerce-platform
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: analytics-platform
+  title: Analytics & Reporting Platform
+  description: Business intelligence, metrics, and customer insights
+  tags:
+    - analytics
+    - reporting
+    - metrics
+spec:
+  owner: devops-team
+  domain: ecommerce-platform
+
+# ============================================================
+# FRONTEND COMPONENTS
+# ============================================================
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: web-storefront
+  title: Web Storefront
+  description: React-based customer-facing e-commerce web application with product browsing and checkout
+  tags:
+    - react
+    - typescript
+    - frontend
+    - nextjs
+    - ecommerce
+  annotations:
+    github.com/project-slug: votingtech/web-storefront
+    backstage.io/kubernetes-id: web-storefront
+    backstage.io/kubernetes-namespace: production
+    jenkins.io/job-full-name: 'frontend/web-storefront'
+    sonarqube.org/project-key: web-storefront
+  links:
+    - url: https://shop.votingtech.com
+      title: Production Site
+      icon: web
+    - url: https://github.com/votingtech/web-storefront
+      title: Source Code
+      icon: github
+spec:
+  type: website
+  lifecycle: production
+  owner: frontend-team
+  system: customer-management
+  consumesApis:
+    - customer-api
+    - product-catalog-api
+    - cart-api
+    - order-api
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: admin-dashboard
+  title: Admin Dashboard
+  description: Vue.js admin interface for managing products, orders, and customers
+  tags:
+    - vue
+    - typescript
+    - frontend
+    - admin
+  annotations:
+    github.com/project-slug: votingtech/admin-dashboard
+    backstage.io/kubernetes-id: admin-dashboard
+    jenkins.io/job-full-name: 'frontend/admin-dashboard'
+  links:
+    - url: https://admin.votingtech.com
+      title: Admin Portal
+      icon: dashboard
+spec:
+  type: website
+  lifecycle: production
+  owner: frontend-team
+  system: inventory-management
+  consumesApis:
+    - admin-api
+    - product-catalog-api
+    - analytics-api
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: mobile-app
+  title: Mobile Shopping App
+  description: React Native mobile application for iOS and Android
+  tags:
+    - react-native
+    - mobile
+    - ios
+    - android
+  annotations:
+    github.com/project-slug: votingtech/mobile-app
+  links:
+    - url: https://apps.apple.com/votingtech-shop
+      title: App Store
+      icon: mobile
+spec:
+  type: mobile-app
+  lifecycle: production
+  owner: frontend-team
+  system: customer-management
+  consumesApis:
+    - customer-api
+    - product-catalog-api
+    - cart-api
+
+# ============================================================
+# BACKEND SERVICES - CUSTOMER MANAGEMENT
+# ============================================================
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: customer-service
+  title: Customer Service
+  description: Node.js microservice handling customer accounts, authentication, and profile management
+  tags:
+    - nodejs
+    - express
+    - microservice
+    - authentication
+  annotations:
+    github.com/project-slug: votingtech/customer-service
+    backstage.io/kubernetes-id: customer-service
+    backstage.io/kubernetes-namespace: production
+    jenkins.io/job-full-name: 'backend/customer-service'
+    sonarqube.org/project-key: customer-service
+  links:
+    - url: https://api.votingtech.com/customers
+      title: API Endpoint
+      icon: api
+spec:
+  type: service
+  lifecycle: production
+  owner: backend-team
+  system: customer-management
+  providesApis:
+    - customer-api
+  dependsOn:
+    - resource:customer-database
+    - resource:redis-cache
+    - component:notification-service
+  consumesApis:
+    - notification-api
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: auth-service
+  title: Authentication Service
+  description: OAuth2/JWT authentication and authorization service built with Go
+  tags:
+    - golang
+    - oauth2
+    - jwt
+    - security
+  annotations:
+    github.com/project-slug: votingtech/auth-service
+    backstage.io/kubernetes-id: auth-service
+    jenkins.io/job-full-name: 'backend/auth-service'
+spec:
+  type: service
+  lifecycle: production
+  owner: backend-team
+  system: customer-management
+  providesApis:
+    - auth-api
+  dependsOn:
+    - resource:customer-database
+    - resource:redis-cache
+
+# ============================================================
+# BACKEND SERVICES - ORDER PROCESSING
+# ============================================================
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: cart-service
+  title: Shopping Cart Service
+  description: Java Spring Boot service managing shopping cart operations and session state
+  tags:
+    - java
+    - spring-boot
+    - microservice
+    - cart
+  annotations:
+    github.com/project-slug: votingtech/cart-service
+    backstage.io/kubernetes-id: cart-service
+    jenkins.io/job-full-name: 'backend/cart-service'
+    sonarqube.org/project-key: cart-service
+spec:
+  type: service
+  lifecycle: production
+  owner: backend-team
+  system: order-processing
+  providesApis:
+    - cart-api
+  dependsOn:
+    - resource:redis-cache
+    - component:product-catalog-service
+  consumesApis:
+    - product-catalog-api
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: order-service
+  title: Order Service
+  description: Python FastAPI service for order creation, tracking, and fulfillment
+  tags:
+    - python
+    - fastapi
+    - microservice
+    - orders
+  annotations:
+    github.com/project-slug: votingtech/order-service
+    backstage.io/kubernetes-id: order-service
+    jenkins.io/job-full-name: 'backend/order-service'
+    sonarqube.org/project-key: order-service
+spec:
+  type: service
+  lifecycle: production
+  owner: backend-team
+  system: order-processing
+  providesApis:
+    - order-api
+  dependsOn:
+    - resource:order-database
+    - resource:message-queue
+    - component:payment-service
+    - component:inventory-service
+  consumesApis:
+    - payment-api
+    - inventory-api
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: fulfillment-service
+  title: Fulfillment Service
+  description: Order fulfillment and shipping coordination service
+  tags:
+    - nodejs
+    - typescript
+    - microservice
+    - shipping
+  annotations:
+    github.com/project-slug: votingtech/fulfillment-service
+    backstage.io/kubernetes-id: fulfillment-service
+    jenkins.io/job-full-name: 'backend/fulfillment-service'
+spec:
+  type: service
+  lifecycle: production
+  owner: backend-team
+  system: order-processing
+  providesApis:
+    - fulfillment-api
+  dependsOn:
+    - resource:order-database
+    - resource:message-queue
+    - component:notification-service
+  consumesApis:
+    - notification-api
+
+# ============================================================
+# BACKEND SERVICES - INVENTORY
+# ============================================================
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: product-catalog-service
+  title: Product Catalog Service
+  description: .NET Core service managing product information, categories, and search
+  tags:
+    - dotnet
+    - csharp
+    - microservice
+    - catalog
+  annotations:
+    github.com/project-slug: votingtech/product-catalog-service
+    backstage.io/kubernetes-id: product-catalog-service
+    jenkins.io/job-full-name: 'backend/product-catalog-service'
+    sonarqube.org/project-key: product-catalog-service
+spec:
+  type: service
+  lifecycle: production
+  owner: backend-team
+  system: inventory-management
+  providesApis:
+    - product-catalog-api
+  dependsOn:
+    - resource:product-database
+    - resource:elasticsearch-cluster
+    - resource:redis-cache
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: inventory-service
+  title: Inventory Service
+  description: Real-time inventory tracking and warehouse management service
+  tags:
+    - java
+    - spring-boot
+    - microservice
+    - inventory
+  annotations:
+    github.com/project-slug: votingtech/inventory-service
+    backstage.io/kubernetes-id: inventory-service
+    jenkins.io/job-full-name: 'backend/inventory-service'
+spec:
+  type: service
+  lifecycle: production
+  owner: backend-team
+  system: inventory-management
+  providesApis:
+    - inventory-api
+  dependsOn:
+    - resource:product-database
+    - resource:message-queue
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: search-service
+  title: Product Search Service
+  description: Elasticsearch-based product search and recommendation engine
+  tags:
+    - python
+    - elasticsearch
+    - search
+    - ml
+  annotations:
+    github.com/project-slug: votingtech/search-service
+    backstage.io/kubernetes-id: search-service
+    jenkins.io/job-full-name: 'backend/search-service'
+spec:
+  type: service
+  lifecycle: production
+  owner: backend-team
+  system: inventory-management
+  providesApis:
+    - search-api
+  dependsOn:
+    - resource:elasticsearch-cluster
+    - component:product-catalog-service
+  consumesApis:
+    - product-catalog-api
+
+# ============================================================
+# BACKEND SERVICES - PAYMENT
+# ============================================================
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: payment-service
+  title: Payment Service
+  description: PCI-compliant payment processing service with Stripe integration
+  tags:
+    - golang
+    - payment
+    - stripe
+    - pci-dss
+  annotations:
+    github.com/project-slug: votingtech/payment-service
+    backstage.io/kubernetes-id: payment-service
+    jenkins.io/job-full-name: 'backend/payment-service'
+    sonarqube.org/project-key: payment-service
+spec:
+  type: service
+  lifecycle: production
+  owner: backend-team
+  system: payment-processing
+  providesApis:
+    - payment-api
+  dependsOn:
+    - resource:payment-database
+    - resource:message-queue
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: billing-service
+  title: Billing & Invoicing Service
+  description: Invoice generation and billing history management
+  tags:
+    - nodejs
+    - billing
+    - invoicing
+  annotations:
+    github.com/project-slug: votingtech/billing-service
+    backstage.io/kubernetes-id: billing-service
+    jenkins.io/job-full-name: 'backend/billing-service'
+spec:
+  type: service
+  lifecycle: production
+  owner: backend-team
+  system: payment-processing
+  providesApis:
+    - billing-api
+  dependsOn:
+    - resource:payment-database
+    - component:notification-service
+  consumesApis:
+    - notification-api
+
+# ============================================================
+# BACKEND SERVICES - ANALYTICS
+# ============================================================
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: analytics-service
+  title: Analytics Service
+  description: Real-time analytics processing with Apache Kafka and Spark
+  tags:
+    - scala
+    - spark
+    - kafka
+    - analytics
+  annotations:
+    github.com/project-slug: votingtech/analytics-service
+    backstage.io/kubernetes-id: analytics-service
+    jenkins.io/job-full-name: 'backend/analytics-service'
+spec:
+  type: service
+  lifecycle: production
+  owner: devops-team
+  system: analytics-platform
+  providesApis:
+    - analytics-api
+  dependsOn:
+    - resource:kafka-cluster
+    - resource:analytics-database
+    - resource:data-warehouse
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: reporting-service
+  title: Reporting Service
+  description: Business intelligence and custom report generation
+  tags:
+    - python
+    - pandas
+    - reporting
+  annotations:
+    github.com/project-slug: votingtech/reporting-service
+    backstage.io/kubernetes-id: reporting-service
+    jenkins.io/job-full-name: 'backend/reporting-service'
+spec:
+  type: service
+  lifecycle: production
+  owner: devops-team
+  system: analytics-platform
+  providesApis:
+    - reporting-api
+  dependsOn:
+    - resource:data-warehouse
+    - resource:analytics-database
+
+# ============================================================
+# SHARED SERVICES
+# ============================================================
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: notification-service
+  title: Notification Service
+  description: Multi-channel notification service (email, SMS, push)
+  tags:
+    - nodejs
+    - notifications
+    - sendgrid
+    - twilio
+  annotations:
+    github.com/project-slug: votingtech/notification-service
+    backstage.io/kubernetes-id: notification-service
+    jenkins.io/job-full-name: 'backend/notification-service'
+spec:
+  type: service
+  lifecycle: production
+  owner: backend-team
+  system: customer-management
+  providesApis:
+    - notification-api
+  dependsOn:
+    - resource:message-queue
+    - resource:notification-database
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: api-gateway
+  title: API Gateway
+  description: Kong-based API gateway for routing, rate limiting, and authentication
+  tags:
+    - kong
+    - gateway
+    - routing
+    - security
+  annotations:
+    github.com/project-slug: votingtech/api-gateway
+    backstage.io/kubernetes-id: api-gateway
+    jenkins.io/job-full-name: 'infrastructure/api-gateway'
+spec:
+  type: service
+  lifecycle: production
+  owner: devops-team
+  system: customer-management
+  dependsOn:
+    - resource:redis-cache
+    - component:auth-service
+  consumesApis:
+    - auth-api
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: admin-service
+  title: Admin Backend Service
+  description: Administrative operations and internal tools API
+  tags:
+    - python
+    - django
+    - admin
+  annotations:
+    github.com/project-slug: votingtech/admin-service
+    backstage.io/kubernetes-id: admin-service
+    jenkins.io/job-full-name: 'backend/admin-service'
+spec:
+  type: service
+  lifecycle: production
+  owner: backend-team
+  system: inventory-management
+  providesApis:
+    - admin-api
+  dependsOn:
+    - resource:customer-database
+    - resource:product-database
+    - resource:order-database
+  consumesApis:
+    - customer-api
+    - product-catalog-api
+    - order-api
+
+# ============================================================
+# APIS
+# ============================================================
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: customer-api
+  title: Customer Management API
+  description: RESTful API for customer account operations
+  tags:
+    - rest
+    - openapi
+    - customers
+spec:
+  type: openapi
+  lifecycle: production
+  owner: backend-team
+  system: customer-management
+  definition: |
+    openapi: 3.0.0
+    info:
+      title: Customer API
+      version: 2.0.0
+    paths:
+      /customers:
+        get:
+          summary: List customers
+        post:
+          summary: Create customer
+      /customers/{id}:
+        get:
+          summary: Get customer details
+        put:
+          summary: Update customer
+        delete:
+          summary: Delete customer
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: auth-api
+  title: Authentication API
+  description: OAuth2 and JWT authentication endpoints
+  tags:
+    - oauth2
+    - jwt
+    - security
+spec:
+  type: openapi
+  lifecycle: production
+  owner: backend-team
+  system: customer-management
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: cart-api
+  title: Shopping Cart API
+  description: Shopping cart management endpoints
+  tags:
+    - rest
+    - cart
+spec:
+  type: openapi
+  lifecycle: production
+  owner: backend-team
+  system: order-processing
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: order-api
+  title: Order Management API
+  description: Order creation, tracking, and management
+  tags:
+    - rest
+    - orders
+spec:
+  type: openapi
+  lifecycle: production
+  owner: backend-team
+  system: order-processing
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: fulfillment-api
+  title: Fulfillment API
+  description: Order fulfillment and shipping coordination
+  tags:
+    - rest
+    - shipping
+spec:
+  type: openapi
+  lifecycle: production
+  owner: backend-team
+  system: order-processing
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: product-catalog-api
+  title: Product Catalog API
+  description: Product information and catalog browsing
+  tags:
+    - rest
+    - products
+spec:
+  type: openapi
+  lifecycle: production
+  owner: backend-team
+  system: inventory-management
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: inventory-api
+  title: Inventory Management API
+  description: Stock levels and warehouse operations
+  tags:
+    - rest
+    - inventory
+spec:
+  type: openapi
+  lifecycle: production
+  owner: backend-team
+  system: inventory-management
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: search-api
+  title: Product Search API
+  description: Full-text search and recommendations
+  tags:
+    - rest
+    - search
+    - elasticsearch
+spec:
+  type: openapi
+  lifecycle: production
+  owner: backend-team
+  system: inventory-management
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: payment-api
+  title: Payment Processing API
+  description: Payment transactions and gateway integration
+  tags:
+    - rest
+    - payments
+    - pci-dss
+spec:
+  type: openapi
+  lifecycle: production
+  owner: backend-team
+  system: payment-processing
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: billing-api
+  title: Billing & Invoicing API
+  description: Invoice generation and billing history
+  tags:
+    - rest
+    - billing
+spec:
+  type: openapi
+  lifecycle: production
+  owner: backend-team
+  system: payment-processing
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: analytics-api
+  title: Analytics API
+  description: Business metrics and customer insights
+  tags:
+    - rest
+    - analytics
+spec:
+  type: openapi
+  lifecycle: production
+  owner: devops-team
+  system: analytics-platform
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: reporting-api
+  title: Reporting API
+  description: Custom report generation and export
+  tags:
+    - rest
+    - reporting
+spec:
+  type: openapi
+  lifecycle: production
+  owner: devops-team
+  system: analytics-platform
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: notification-api
+  title: Notification API
+  description: Multi-channel notification delivery
+  tags:
+    - rest
+    - notifications
+spec:
+  type: openapi
+  lifecycle: production
+  owner: backend-team
+  system: customer-management
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: admin-api
+  title: Admin Operations API
+  description: Administrative and internal tools
+  tags:
+    - rest
+    - admin
+spec:
+  type: openapi
+  lifecycle: production
+  owner: backend-team
+  system: inventory-management
+
+# ============================================================
+# RESOURCES
+# ============================================================
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: customer-database
+  title: Customer Database
+  description: PostgreSQL database for customer accounts and profiles
+  tags:
+    - postgresql
+    - database
+    - customers
+spec:
+  type: database
+  owner: devops-team
+  system: customer-management
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: product-database
+  title: Product Database
+  description: PostgreSQL database for product catalog and inventory
+  tags:
+    - postgresql
+    - database
+    - products
+spec:
+  type: database
+  owner: devops-team
+  system: inventory-management
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: order-database
+  title: Order Database
+  description: PostgreSQL database for orders and fulfillment
+  tags:
+    - postgresql
+    - database
+    - orders
+spec:
+  type: database
+  owner: devops-team
+  system: order-processing
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: payment-database
+  title: Payment Database
+  description: PostgreSQL database for payment transactions (PCI-DSS compliant)
+  tags:
+    - postgresql
+    - database
+    - payments
+    - pci-dss
+spec:
+  type: database
+  owner: devops-team
+  system: payment-processing
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: analytics-database
+  title: Analytics Database
+  description: TimescaleDB for time-series analytics data
+  tags:
+    - timescaledb
+    - postgresql
+    - analytics
+spec:
+  type: database
+  owner: devops-team
+  system: analytics-platform
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: notification-database
+  title: Notification Database
+  description: MongoDB for notification history and templates
+  tags:
+    - mongodb
+    - nosql
+    - notifications
+spec:
+  type: database
+  owner: devops-team
+  system: customer-management
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: redis-cache
+  title: Redis Cache Cluster
+  description: Redis cluster for session state and caching
+  tags:
+    - redis
+    - cache
+    - inmemory
+spec:
+  type: cache
+  owner: devops-team
+  system: customer-management
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: message-queue
+  title: RabbitMQ Message Queue
+  description: RabbitMQ for asynchronous messaging between services
+  tags:
+    - rabbitmq
+    - messaging
+    - queue
+spec:
+  type: message-queue
+  owner: devops-team
+  system: order-processing
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: elasticsearch-cluster
+  title: Elasticsearch Cluster
+  description: Elasticsearch for product search and indexing
+  tags:
+    - elasticsearch
+    - search
+    - indexing
+spec:
+  type: search-engine
+  owner: devops-team
+  system: inventory-management
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: kafka-cluster
+  title: Apache Kafka Cluster
+  description: Kafka for event streaming and real-time analytics
+  tags:
+    - kafka
+    - streaming
+    - events
+spec:
+  type: message-broker
+  owner: devops-team
+  system: analytics-platform
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: data-warehouse
+  title: Data Warehouse
+  description: Snowflake data warehouse for business intelligence
+  tags:
+    - snowflake
+    - data-warehouse
+    - bi
+spec:
+  type: data-warehouse
+  owner: devops-team
+  system: analytics-platform
